@@ -1,91 +1,277 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Fraccionamiento Residencial Puerta del Sol</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;max-width:100%;background:#fff;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}body{min-height:0}.site{position:relative;width:100%;max-width:none;margin:0;background:#fff;box-shadow:none;overflow:hidden}.mockup{display:block;width:100%;max-width:none;height:auto;user-select:none;-webkit-user-drag:none}.hotspot{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:8px;z-index:4}.hotspot:hover,.hotspot:focus-visible{outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.10)}.master-hotspot{position:absolute;left:34.4%;top:7.1%;width:59.6%;height:54.2%;z-index:3;border:0;background:transparent;cursor:zoom-in;border-radius:12px}.master-hotspot:hover{box-shadow:inset 0 0 0 3px rgba(229,179,60,.75)}.contact-panel{position:absolute;left:76.75%;top:1.50%;width:14.55%;height:4.35%;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;box-shadow:none;border:0;border-radius:0;color:#f4d27a;text-decoration:none;font-weight:800;line-height:1.12;text-align:center;font-size:clamp(7px,0.78vw,12px);text-shadow:0 1px 2px rgba(0,0,0,.65)}.contact-panel span{display:block;white-space:nowrap}.map-hotspot{position:absolute;z-index:8;display:block;background:transparent;border-radius:10px;text-decoration:none;cursor:pointer}.map-hotspot:hover,.map-hotspot:focus-visible{outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.08)}.contact-hotspot{position:absolute;z-index:9;display:block;background:transparent;border:0;border-radius:10px;cursor:pointer}.contact-hotspot:hover,.contact-hotspot:focus-visible{outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.08)}.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,16,12,.93);z-index:100;padding:18px}.modal.open{display:flex}.modal-card{position:relative;width:min(96vw,1400px);height:min(95vh,1100px);display:flex;flex-direction:column;align-items:center;justify-content:center}.modal-img{max-width:100%;max-height:calc(100% - 62px);object-fit:contain;background:#fff;border-radius:12px;box-shadow:0 12px 50px rgba(0,0,0,.5)}.modal-bar{height:54px;width:100%;display:flex;align-items:center;justify-content:center;gap:12px;color:white}.modal-title{font-size:18px;font-weight:800;min-width:130px;text-align:center}.navbtn,.closebtn{appearance:none;border:1px solid rgba(255,255,255,.25);background:#0b5138;color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}.menubtn{appearance:none;border:1px solid rgba(255,255,255,.25);background:#d7a62f;color:#163323;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer;white-space:nowrap}.closebtn{position:absolute;right:0;top:0;background:#bb7e13}.contact-modal{display:none;position:fixed;inset:0;z-index:120;background:rgba(3,16,12,.82);align-items:center;justify-content:center;padding:20px}.contact-modal.open{display:flex}.contact-card{width:min(92vw,430px);background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}.contact-card h2{margin:0 0 16px;color:#0a4a34}.phone{display:block;margin:12px 0;padding:14px;border-radius:12px;background:#f3c660;color:#153726;text-decoration:none;font-size:20px;font-weight:800}.contact-close{border:0;background:#0a4a34;color:#fff;border-radius:12px;padding:11px 20px;font-weight:700;cursor:pointer}
-.mobile-finish{display:none}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fraccionamiento Residencial Puerta del Sol</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;max-width:100%;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden;background:#fff}
+body{min-height:0}
+.site{position:relative;width:100%;margin:0;background:#fff;overflow:hidden}
+.mockup{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+
+.hotspot,.master-hotspot,.contact-hotspot{
+  position:absolute;border:0;background:transparent;cursor:pointer;border-radius:8px
+}
+.hotspot{z-index:4}
+.hotspot:hover,.hotspot:focus-visible,.contact-hotspot:hover,.contact-hotspot:focus-visible{
+  outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.10)
+}
+.master-hotspot{
+  left:34.4%;top:7.1%;width:59.6%;height:54.2%;z-index:3;cursor:zoom-in;border-radius:12px
+}
+.master-hotspot:hover{box-shadow:inset 0 0 0 3px rgba(229,179,60,.75)}
+
+.contact-panel{
+  position:absolute;left:76.75%;top:1.50%;width:14.55%;height:4.35%;z-index:6;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:transparent;box-shadow:none;border:0;color:#f4d27a;text-decoration:none;
+  font-weight:800;line-height:1.12;text-align:center;font-size:clamp(7px,.78vw,12px);
+  text-shadow:0 1px 2px rgba(0,0,0,.65)
+}
+.contact-panel span{display:block;white-space:nowrap}
+
+.map-hotspot{
+  position:absolute;z-index:8;display:block;background:transparent;border-radius:10px;
+  text-decoration:none;cursor:pointer
+}
+.map-hotspot:hover,.map-hotspot:focus-visible{
+  outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.08)
+}
+.contact-hotspot{z-index:9}
+
+.mobile-manzanas,.mobile-finish{display:none}
+
+/* Image modal */
+.modal{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(3,16,12,.93);z-index:100;padding:18px
+}
+.modal.open{display:flex}
+.modal-card{
+  position:relative;width:min(96vw,1400px);height:min(95vh,1100px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.modal-img{
+  max-width:100%;max-height:calc(100% - 62px);object-fit:contain;background:#fff;
+  border-radius:12px;box-shadow:0 12px 50px rgba(0,0,0,.5)
+}
+.modal-bar{
+  height:54px;width:100%;display:flex;align-items:center;justify-content:center;
+  gap:12px;color:#fff
+}
+.modal-title{font-size:18px;font-weight:800;min-width:130px;text-align:center}
+.navbtn,.closebtn,.menubtn{
+  appearance:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;
+  padding:10px 16px;font-weight:800;cursor:pointer
+}
+.navbtn{background:#0b5138;color:#fff}
+.menubtn{background:#d7a62f;color:#163323;white-space:nowrap}
+.closebtn{position:absolute;right:0;top:0;background:#bb7e13;color:#fff}
+
+/* Contact modal */
+.contact-modal{
+  display:none;position:fixed;inset:0;z-index:120;background:rgba(3,16,12,.82);
+  align-items:center;justify-content:center;padding:20px
+}
+.contact-modal.open{display:flex}
+.contact-card{
+  width:min(92vw,430px);background:#fff;border-radius:20px;padding:28px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4)
+}
+.contact-card h2{margin:0 0 16px;color:#0a4a34}
+.phone{
+  display:block;margin:12px 0;padding:14px;border-radius:12px;background:#f3c660;
+  color:#153726;text-decoration:none;font-size:20px;font-weight:800
+}
+.contact-close{
+  border:0;background:#0a4a34;color:#fff;border-radius:12px;padding:11px 20px;
+  font-weight:700;cursor:pointer
+}
+
 @media(max-width:700px){
-html,body{background:#062d20}
-.mobile-finish{
-  display:flex;
-  min-height:max(360px,calc(100svh - 75vw));
-  padding:42px 24px max(38px,env(safe-area-inset-bottom));
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#fff;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(226,184,73,.18),transparent 34%),
-    linear-gradient(180deg,#0a4a34 0%,#063524 55%,#05291d 100%);
-  border-top:1px solid rgba(224,181,65,.55);
+  html,body{background:#062d20}
+
+  /* On phones, show only the hero/master-plan part of the approved image. */
+  .mockup{
+    width:100%;
+    height:47vw;
+    object-fit:cover;
+    object-position:top;
+  }
+  .hotspot{display:none}
+  .master-hotspot{top:11%;height:84%}
+  .contact-panel{top:2.3%;height:6.7%;font-size:5.5px}
+  .map-hotspot:nth-of-type(1){top:1.86%!important;height:6.56%!important}
+  .map-hotspot:nth-of-type(2){top:26.24%!important;height:25.00%!important}
+  .contact-hotspot{top:1.86%!important;height:6.56%!important}
+
+  /* Larger, touch-friendly manzana section. */
+  .mobile-manzanas{
+    display:block;
+    background:linear-gradient(180deg,#fff 0%,#fbf8ef 100%);
+    padding:24px 16px 28px;
+    color:#183628;
+    border-top:1px solid #ead8a5;
+  }
+  .mobile-manzanas h2{
+    margin:0;text-align:center;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:28px;line-height:1.05;color:#153829
+  }
+  .mobile-manzanas .sub{
+    margin:7px auto 18px;text-align:center;max-width:330px;
+    font-size:13px;line-height:1.4;color:#62645e
+  }
+  .m-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:9px;
+    max-width:430px;margin:0 auto 18px
+  }
+  .m-grid button{
+    min-height:44px;border:1px solid #d7c59a;border-radius:10px;background:#fffaf0;
+    color:#243a2f;font-size:14px;font-weight:900;cursor:pointer;
+    box-shadow:0 2px 8px rgba(24,54,40,.06)
+  }
+  .m-grid button.active{
+    background:#0c5239;color:#fff;border-color:#d9ad42;
+    box-shadow:inset 0 0 0 1px #d9ad42
+  }
+  .m-preview{
+    max-width:430px;margin:0 auto;background:#fff;border:1px solid #eadfc4;
+    border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(27,57,43,.09)
+  }
+  .m-preview-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px
+  }
+  .m-preview-title{
+    font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:800;color:#143b2a
+  }
+  .m-preview-note{font-size:12px;color:#777;text-align:right;line-height:1.3}
+  .m-preview-img{
+    display:block;width:100%;height:190px;object-fit:contain;background:#f8f6ef;
+    border-radius:12px;border:1px solid #eee6d2
+  }
+  .m-open{
+    width:100%;margin-top:12px;border:0;border-radius:12px;padding:13px 14px;
+    background:linear-gradient(180deg,#f4cb69,#dfa82e);color:#173728;
+    font-size:14px;font-weight:900;cursor:pointer
+  }
+
+  /* More compact green ending. */
+  .mobile-finish{
+    display:flex;min-height:285px;padding:26px 22px max(24px,env(safe-area-inset-bottom));
+    flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;
+    background:
+      radial-gradient(circle at 50% 0%,rgba(226,184,73,.16),transparent 34%),
+      linear-gradient(180deg,#0a4a34 0%,#063524 55%,#05291d 100%);
+    border-top:1px solid rgba(224,181,65,.55)
+  }
+  .mf-kicker{
+    margin:0 0 6px;color:#e8c76d;font-size:10px;font-weight:900;letter-spacing:2px
+  }
+  .mobile-finish h2{
+    margin:0;font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.05;
+    color:#fff4cf
+  }
+  .mf-rule{width:74px;height:3px;margin:12px 0 14px;border-radius:99px;background:#d8aa38}
+  .mobile-finish p{
+    margin:0 0 14px;max-width:320px;font-size:13px;line-height:1.4;color:rgba(255,255,255,.82)
+  }
+  .mf-phones{display:flex;width:min(100%,360px);gap:9px}
+  .mf-phones a{
+    flex:1;padding:10px 8px;border:1px solid rgba(229,188,79,.8);border-radius:999px;
+    color:#fff5d5;text-decoration:none;font-size:12px;font-weight:800;background:rgba(255,255,255,.05)
+  }
+  .mf-top{
+    margin-top:14px;padding:10px 16px;border:0;border-radius:999px;background:#d8aa38;
+    color:#173728;font-size:12px;font-weight:900;cursor:pointer
+  }
+
+  .modal{padding:6px}
+  .modal-card{width:100vw;height:100vh}
+  .modal-img{max-height:calc(100% - 72px);border-radius:4px}
+  .modal-bar{height:auto;min-height:64px;flex-wrap:wrap;padding:6px 0}
+  .navbtn,.menubtn{padding:8px 11px;font-size:12px}
+  .closebtn{top:4px;right:6px}
 }
-.mobile-finish .mf-kicker{
-  margin:0 0 8px;
-  color:#e8c76d;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:2.2px;
-}
-.mobile-finish h2{
-  margin:0;
-  font-family:Georgia,'Times New Roman',serif;
-  font-size:30px;
-  line-height:1.05;
-  color:#fff4cf;
-}
-.mobile-finish .mf-rule{
-  width:86px;
-  height:3px;
-  margin:16px 0 18px;
-  border-radius:99px;
-  background:#d8aa38;
-}
-.mobile-finish p{
-  margin:0 0 18px;
-  max-width:320px;
-  font-size:14px;
-  line-height:1.45;
-  color:rgba(255,255,255,.82);
-}
-.mobile-finish .mf-phones{
-  display:flex;
-  width:min(100%,360px);
-  gap:10px;
-}
-.mobile-finish .mf-phones a{
-  flex:1;
-  padding:12px 10px;
-  border:1px solid rgba(229,188,79,.8);
-  border-radius:999px;
-  color:#fff5d5;
-  text-decoration:none;
-  font-size:13px;
-  font-weight:800;
-  background:rgba(255,255,255,.05);
-}
-.mobile-finish .mf-top{
-  margin-top:18px;
-  padding:11px 18px;
-  border:0;
-  border-radius:999px;
-  background:#d8aa38;
-  color:#173728;
-  font-size:13px;
-  font-weight:900;
-  cursor:pointer;
-}
-@media(max-width:700px){.site{width:100%;overflow:hidden}.contact-panel{font-size:5.5px;border-radius:12px}.modal{padding:6px}.modal-card{width:100vw;height:100vh}.modal-img{max-height:calc(100% - 72px);border-radius:4px}.modal-bar{height:auto;min-height:64px;flex-wrap:wrap;padding:6px 0}.navbtn,.menubtn{padding:8px 11px;font-size:12px}.closebtn{top:4px;right:6px}}
-</style></head><body><div class="site"><img class="mockup" src="./pagina_puerta_del_sol.png" alt="Página Puerta del Sol" onerror="this.style.display='none';document.getElementById('assetError').style.display='flex'">
-<div id="assetError" style="display:none;min-height:70vh;align-items:center;justify-content:center;text-align:center;padding:32px;color:#fff;background:#082f22;font-size:18px;font-weight:700">No se pudo cargar la imagen principal del sitio.</div><a class="map-hotspot" href="https://www.google.com/maps/search/?api=1&query=Juan+Escutia+y+Camino+Real%2C+Colonia+Miguel+Hidalgo%2C+Penjamo%2C+Guanajuato%2C+Mexico" target="_blank" rel="noopener noreferrer" style="left:58.70%;top:1.20%;width:10.15%;height:4.24%;" aria-label="Abrir ubicación de Puerta del Sol en Google Maps" title="Abrir ubicación en Google Maps"></a><a class="map-hotspot" href="https://www.google.com/maps/search/?api=1&query=Juan+Escutia+y+Camino+Real%2C+Colonia+Miguel+Hidalgo%2C+Penjamo%2C+Guanajuato%2C+Mexico" target="_blank" rel="noopener noreferrer" style="left:82.45%;top:16.95%;width:11.35%;height:16.15%;" aria-label="Abrir acceso de Puerta del Sol en Google Maps" title="Abrir acceso en Google Maps"></a><button class="master-hotspot" onclick="openMaster()" aria-label="Abrir plano maestro"></button><a class="contact-panel" href="#" onclick="event.preventDefault();openContact()"><span>353 535 0291</span><span>331 227 9687</span></a><button class="contact-hotspot" style="left:69.82%;top:1.20%;width:10.15%;height:4.24%;" onclick="openContact()" aria-label="Abrir contacto" title="Contacto"></button><button class="hotspot" style="left:5.6630%;top:71.6390%;width:6.3536%;height:3.4991%;" onclick="openManzana('M1')" aria-label="Ver M1 en detalle" title="Ver M1 en detalle"></button>
-<button class="hotspot" style="left:13.1215%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M2')" aria-label="Ver M2 en detalle" title="Ver M2 en detalle"></button>
-<button class="hotspot" style="left:20.4420%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M3')" aria-label="Ver M3 en detalle" title="Ver M3 en detalle"></button>
-<button class="hotspot" style="left:27.6243%;top:71.6390%;width:6.2845%;height:3.4991%;" onclick="openManzana('M4')" aria-label="Ver M4 en detalle" title="Ver M4 en detalle"></button>
-<button class="hotspot" style="left:35.0138%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M5')" aria-label="Ver M5 en detalle" title="Ver M5 en detalle"></button>
-<button class="hotspot" style="left:42.4033%;top:71.6390%;width:6.9061%;height:3.4991%;" onclick="openManzana('M6')" aria-label="Ver M6 en detalle" title="Ver M6 en detalle"></button>
-<button class="hotspot" style="left:50.4144%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M7')" aria-label="Ver M7 en detalle" title="Ver M7 en detalle"></button>
-<button class="hotspot" style="left:58.0110%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M8')" aria-label="Ver M8 en detalle" title="Ver M8 en detalle"></button>
-<button class="hotspot" style="left:65.5387%;top:71.6390%;width:6.3536%;height:3.4991%;" onclick="openManzana('M9')" aria-label="Ver M9 en detalle" title="Ver M9 en detalle"></button>
-<button class="hotspot" style="left:72.8591%;top:71.6390%;width:6.4227%;height:3.4991%;" onclick="openManzana('M10')" aria-label="Ver M10 en detalle" title="Ver M10 en detalle"></button>
-<button class="hotspot" style="left:80.3177%;top:71.6390%;width:6.4227%;height:3.4991%;" onclick="openManzana('M11')" aria-label="Ver M11 en detalle" title="Ver M11 en detalle"></button>
-<button class="hotspot" style="left:87.7762%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M12')" aria-label="Ver M12 en detalle" title="Ver M12 en detalle"></button></div>
+</style>
+</head>
+<body>
+
+<div class="site">
+  <img class="mockup" src="./pagina_puerta_del_sol.png" alt="Página Puerta del Sol"
+       onerror="this.style.display='none';document.getElementById('assetError').style.display='flex'">
+
+  <div id="assetError" style="display:none;min-height:70vh;align-items:center;justify-content:center;text-align:center;padding:32px;color:#fff;background:#082f22;font-size:18px;font-weight:700">
+    No se pudo cargar la imagen principal del sitio.
+  </div>
+
+  <a class="map-hotspot"
+     href="https://www.google.com/maps/search/?api=1&query=Juan+Escutia+y+Camino+Real%2C+Colonia+Miguel+Hidalgo%2C+Penjamo%2C+Guanajuato%2C+Mexico"
+     target="_blank" rel="noopener noreferrer"
+     style="left:58.70%;top:1.20%;width:10.15%;height:4.24%;"
+     aria-label="Abrir ubicación de Puerta del Sol en Google Maps" title="Abrir ubicación en Google Maps"></a>
+
+  <a class="map-hotspot"
+     href="https://www.google.com/maps/search/?api=1&query=Juan+Escutia+y+Camino+Real%2C+Colonia+Miguel+Hidalgo%2C+Penjamo%2C+Guanajuato%2C+Mexico"
+     target="_blank" rel="noopener noreferrer"
+     style="left:82.45%;top:16.95%;width:11.35%;height:16.15%;"
+     aria-label="Abrir acceso de Puerta del Sol en Google Maps" title="Abrir acceso en Google Maps"></a>
+
+  <button class="master-hotspot" onclick="openMaster()" aria-label="Abrir plano maestro"></button>
+
+  <a class="contact-panel" href="#" onclick="event.preventDefault();openContact()">
+    <span>353 535 0291</span><span>331 227 9687</span>
+  </a>
+
+  <button class="contact-hotspot"
+          style="left:69.82%;top:1.20%;width:10.15%;height:4.24%;"
+          onclick="openContact()" aria-label="Abrir contacto" title="Contacto"></button>
+
+  <button class="hotspot" style="left:5.6630%;top:71.6390%;width:6.3536%;height:3.4991%;" onclick="openManzana('M1')" aria-label="Ver M1 en detalle"></button>
+  <button class="hotspot" style="left:13.1215%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M2')" aria-label="Ver M2 en detalle"></button>
+  <button class="hotspot" style="left:20.4420%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M3')" aria-label="Ver M3 en detalle"></button>
+  <button class="hotspot" style="left:27.6243%;top:71.6390%;width:6.2845%;height:3.4991%;" onclick="openManzana('M4')" aria-label="Ver M4 en detalle"></button>
+  <button class="hotspot" style="left:35.0138%;top:71.6390%;width:6.2155%;height:3.4991%;" onclick="openManzana('M5')" aria-label="Ver M5 en detalle"></button>
+  <button class="hotspot" style="left:42.4033%;top:71.6390%;width:6.9061%;height:3.4991%;" onclick="openManzana('M6')" aria-label="Ver M6 en detalle"></button>
+  <button class="hotspot" style="left:50.4144%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M7')" aria-label="Ver M7 en detalle"></button>
+  <button class="hotspot" style="left:58.0110%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M8')" aria-label="Ver M8 en detalle"></button>
+  <button class="hotspot" style="left:65.5387%;top:71.6390%;width:6.3536%;height:3.4991%;" onclick="openManzana('M9')" aria-label="Ver M9 en detalle"></button>
+  <button class="hotspot" style="left:72.8591%;top:71.6390%;width:6.4227%;height:3.4991%;" onclick="openManzana('M10')" aria-label="Ver M10 en detalle"></button>
+  <button class="hotspot" style="left:80.3177%;top:71.6390%;width:6.4227%;height:3.4991%;" onclick="openManzana('M11')" aria-label="Ver M11 en detalle"></button>
+  <button class="hotspot" style="left:87.7762%;top:71.6390%;width:6.4917%;height:3.4991%;" onclick="openManzana('M12')" aria-label="Ver M12 en detalle"></button>
+</div>
+
+<section class="mobile-manzanas" aria-label="Ver detalle por manzana">
+  <h2>Ver detalle por manzana</h2>
+  <p class="sub">Selecciona una manzana para verla más grande y consultar el detalle de sus lotes.</p>
+
+  <div class="m-grid">
+    <button class="active" data-m="M1" onclick="selectMobileManzana('M1',this)">M1</button>
+    <button data-m="M2" onclick="selectMobileManzana('M2',this)">M2</button>
+    <button data-m="M3" onclick="selectMobileManzana('M3',this)">M3</button>
+    <button data-m="M4" onclick="selectMobileManzana('M4',this)">M4</button>
+    <button data-m="M5" onclick="selectMobileManzana('M5',this)">M5</button>
+    <button data-m="M6" onclick="selectMobileManzana('M6',this)">M6</button>
+    <button data-m="M7" onclick="selectMobileManzana('M7',this)">M7</button>
+    <button data-m="M8" onclick="selectMobileManzana('M8',this)">M8</button>
+    <button data-m="M9" onclick="selectMobileManzana('M9',this)">M9</button>
+    <button data-m="M10" onclick="selectMobileManzana('M10',this)">M10</button>
+    <button data-m="M11" onclick="selectMobileManzana('M11',this)">M11</button>
+    <button data-m="M12" onclick="selectMobileManzana('M12',this)">M12</button>
+  </div>
+
+  <div class="m-preview">
+    <div class="m-preview-head">
+      <div class="m-preview-title" id="mobileManzanaTitle">M1</div>
+      <div class="m-preview-note">Vista previa<br>del plano individual</div>
+    </div>
+    <img class="m-preview-img" id="mobileManzanaImg" src="./M1.png" alt="Vista previa M1">
+    <button class="m-open" onclick="openSelectedMobile()">Ver imagen en tamaño completo</button>
+  </div>
+</section>
+
 <section class="mobile-finish" aria-label="Cierre de página">
   <div class="mf-kicker">FRACCIONAMIENTO RESIDENCIAL</div>
   <h2>PUERTA DEL SOL</h2>
@@ -97,19 +283,103 @@ html,body{background:#062d20}
   </div>
   <button class="mf-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Volver al inicio</button>
 </section>
-<div class="modal" id="modal"><div class="modal-card"><button class="closebtn" onclick="closeModal()">Cerrar ✕</button><img class="modal-img" id="modalImg"><div class="modal-bar"><button class="menubtn" onclick="backToMain()">← Menú principal</button><button class="navbtn" onclick="move(-1)">← Anterior</button><div class="modal-title" id="modalTitle"></div><button class="navbtn" onclick="move(1)">Siguiente →</button></div></div></div><div class="contact-modal" id="contactModal"><div class="contact-card"><h2>Contacto</h2><a class="phone" href="tel:+523535350291">353 535 0291</a><a class="phone" href="tel:+523312279687">331 227 9687</a><button class="contact-close" onclick="backContactToMain()">← Menú principal</button></div></div><script>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="closebtn" onclick="closeModal()">Cerrar ✕</button>
+    <img class="modal-img" id="modalImg" alt="">
+    <div class="modal-bar">
+      <button class="menubtn" onclick="backToMain()">← Menú principal</button>
+      <button class="navbtn" onclick="move(-1)">← Anterior</button>
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="navbtn" onclick="move(1)">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<div class="contact-modal" id="contactModal">
+  <div class="contact-card">
+    <h2>Contacto</h2>
+    <a class="phone" href="tel:+523535350291">353 535 0291</a>
+    <a class="phone" href="tel:+523312279687">331 227 9687</a>
+    <button class="contact-close" onclick="backContactToMain()">← Menú principal</button>
+  </div>
+</div>
+
+<script>
 const images={
-  "M1": "./M1.png",
-  "M2": "./M2.png",
-  "M3": "./M3_corregida.png",
-  "M4": "./M4.png",
-  "M5": "./M5.png",
-  "M6": "./M6.png",
-  "M7": "./M7.png",
-  "M8": "./M8.png",
-  "M9": "./M9.png",
-  "M10": "./M10.png",
-  "M11": "./M11.png",
-  "M12": "./M12.png"
-};let current=null;function openManzana(name){current=name;modalImg.src=images[name];modalTitle.textContent=name+' — detalle individual';modal.classList.add('open');document.body.style.overflow='hidden'}function openMaster(){current='MASTER';modalImg.src='./plano_maestro_puerta_del_sol.png';modalTitle.textContent='Plano maestro';modal.classList.add('open');document.body.style.overflow='hidden'}function closeModal(){modal.classList.remove('open');document.body.style.overflow=''}function backToMain(){closeModal();window.scrollTo({top:0,behavior:'smooth'})}function move(d){if(current==='MASTER'||!current)return;let n=parseInt(current.slice(1))+d;if(n<1)n=12;if(n>12)n=1;openManzana('M'+n)}function openContact(){contactModal.classList.add('open');document.body.style.overflow='hidden'}function closeContact(){contactModal.classList.remove('open');document.body.style.overflow=''}function backContactToMain(){closeContact();window.scrollTo({top:0,behavior:'smooth'})}modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});contactModal.addEventListener('click',e=>{if(e.target===contactModal)closeContact()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeContact()}if(modal.classList.contains('open')){if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1)}});
-</script></body></html>
+  "M1":"./M1.png","M2":"./M2.png","M3":"./M3_corregida.png","M4":"./M4.png",
+  "M5":"./M5.png","M6":"./M6.png","M7":"./M7.png","M8":"./M8.png",
+  "M9":"./M9.png","M10":"./M10.png","M11":"./M11.png","M12":"./M12.png"
+};
+let current=null;
+let mobileSelected="M1";
+
+function openManzana(name){
+  current=name;
+  modalImg.src=images[name];
+  modalImg.alt='Plano '+name;
+  modalTitle.textContent=name+' — detalle individual';
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function openMaster(){
+  current='MASTER';
+  modalImg.src='./plano_maestro_puerta_del_sol.png';
+  modalImg.alt='Plano maestro';
+  modalTitle.textContent='Plano maestro';
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  modal.classList.remove('open');
+  document.body.style.overflow='';
+}
+function backToMain(){
+  closeModal();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function move(d){
+  if(current==='MASTER'||!current)return;
+  let n=parseInt(current.slice(1))+d;
+  if(n<1)n=12;
+  if(n>12)n=1;
+  openManzana('M'+n);
+}
+function openContact(){
+  contactModal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeContact(){
+  contactModal.classList.remove('open');
+  document.body.style.overflow='';
+}
+function backContactToMain(){
+  closeContact();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function selectMobileManzana(name,button){
+  mobileSelected=name;
+  document.getElementById('mobileManzanaTitle').textContent=name;
+  const img=document.getElementById('mobileManzanaImg');
+  img.src=images[name];
+  img.alt='Vista previa '+name;
+  document.querySelectorAll('.m-grid button').forEach(b=>b.classList.remove('active'));
+  button.classList.add('active');
+}
+function openSelectedMobile(){
+  openManzana(mobileSelected);
+}
+
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+contactModal.addEventListener('click',e=>{if(e.target===contactModal)closeContact()});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeContact()}
+  if(modal.classList.contains('open')){
+    if(e.key==='ArrowLeft')move(-1);
+    if(e.key==='ArrowRight')move(1);
+  }
+});
+</script>
+</body>
+</html>

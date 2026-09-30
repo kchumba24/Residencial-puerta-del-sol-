@@ -12,6 +12,10 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f2e9;color:#1
 header{background:#073c2b;color:#fff;padding:18px 18px 16px;position:sticky;top:0;z-index:10;box-shadow:0 3px 16px rgba(0,0,0,.18)}
 header h1{margin:0;font-family:Georgia,serif;font-size:25px}
 header p{margin:5px 0 0;color:#d9c587;font-size:12px}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.header-copy{min-width:0}
+.btn-logout{display:none;background:#fff;color:#073c2b;border:1px solid rgba(255,255,255,.55);white-space:nowrap;padding:9px 12px}
+.btn-logout.show{display:inline-block}
 .wrap{max-width:1050px;margin:0 auto;padding:18px}
 .banner{padding:13px 14px;border-radius:12px;margin-bottom:14px;font-size:13px;font-weight:800}
 .banner.demo{background:#fff4cc;border:1px solid #e7c65b;color:#5b4700}
@@ -43,14 +47,21 @@ td:nth-child(2),td:nth-child(3){text-align:center}
   .controls .wide{grid-column:1/-1}
   .summary{grid-template-columns:1fr 1fr}
   header h1{font-size:21px}
+  .header-row{align-items:flex-start}
+  .btn-logout{padding:8px 10px;font-size:12px}
   .wrap{padding:12px}
 }
 </style>
 </head>
 <body>
 <header>
-  <h1>Puerta del Sol · Administración de lotes</h1>
-  <p>Cambia Disponibilidad / Apartado / Vendido / No disponible desde tu celular.</p>
+  <div class="header-row">
+    <div class="header-copy">
+      <h1>Puerta del Sol · Administración de lotes</h1>
+      <p>Cambia Disponibilidad / Apartado / Vendido / No disponible desde tu celular.</p>
+    </div>
+    <button id="logoutButton" class="btn-logout" onclick="adminLogout()">Cerrar sesión</button>
+  </div>
 </header>
 <div class="wrap">
   <div id="modeBanner" class="banner demo">Modo demostración: los cambios se guardan únicamente en este navegador. Antes de publicarlo conectaremos la base de datos para que los cambios sean visibles para todos.</div>
@@ -159,6 +170,13 @@ function hideRecoveryForm(){
   document.getElementById('recoveryCard').style.display='none';
 }
 
+function setSignedInUI(isSignedIn){
+  signedIn=!!isSignedIn;
+  document.getElementById('loginCard').classList.toggle('show',!signedIn);
+  document.getElementById('adminApp').style.display=signedIn?'block':'none';
+  document.getElementById('logoutButton').classList.toggle('show',signedIn);
+}
+
 async function init(){
   if(configured() && window.supabase){
     cloud=true;
@@ -174,10 +192,15 @@ async function init(){
     client.auth.onAuthStateChange(async (event, session)=>{
       if(event==='PASSWORD_RECOVERY'){
         signedIn=!!session;
+        document.getElementById('logoutButton').classList.remove('show');
         showRecoveryForm();
       }
       if(event==='SIGNED_IN' && !location.hash.includes('type=recovery')){
-        signedIn=true;
+        setSignedInUI(true);
+      }
+      if(event==='SIGNED_OUT'){
+        hideRecoveryForm();
+        setSignedInUI(false);
       }
     });
 
@@ -193,8 +216,7 @@ async function init(){
       return;
     }
 
-    document.getElementById('loginCard').classList.toggle('show',!signedIn);
-    document.getElementById('adminApp').style.display=signedIn?'block':'none';
+    setSignedInUI(signedIn);
 
     if(signedIn) await loadCloud();
   }else{
@@ -221,10 +243,8 @@ async function adminLogin(){
     return;
   }
 
-  signedIn=true;
   hideRecoveryForm();
-  document.getElementById('loginCard').classList.remove('show');
-  document.getElementById('adminApp').style.display='block';
+  setSignedInUI(true);
   msg.textContent='';
   await loadCloud();
 }
@@ -275,11 +295,29 @@ async function updateRecoveredPassword(){
 
   history.replaceState({},document.title,location.pathname);
   msg.textContent='Contraseña actualizada correctamente.';
-  signedIn=true;
   hideRecoveryForm();
-  document.getElementById('loginCard').classList.remove('show');
-  document.getElementById('adminApp').style.display='block';
+  setSignedInUI(true);
   await loadCloud();
+}
+
+async function adminLogout(){
+  if(!client)return;
+  const btn=document.getElementById('logoutButton');
+  btn.disabled=true;
+  btn.textContent='Cerrando...';
+  const {error}=await client.auth.signOut();
+  btn.disabled=false;
+  btn.textContent='Cerrar sesión';
+  if(error){
+    alert('No se pudo cerrar la sesión: '+error.message);
+    return;
+  }
+  states={};
+  hideRecoveryForm();
+  setSignedInUI(false);
+  document.getElementById('adminPassword').value='';
+  document.getElementById('loginMessage').textContent='Sesión cerrada correctamente.';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 async function loadCloud(){

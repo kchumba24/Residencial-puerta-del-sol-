@@ -61,8 +61,22 @@ td:nth-child(2),td:nth-child(3){text-align:center}
       <input class="wide" id="adminEmail" type="email" placeholder="Correo de administrador">
       <input class="wide" id="adminPassword" type="password" placeholder="Contraseña">
       <button class="btn-primary wide" onclick="adminLogin()">Entrar</button>
+      <button class="wide" style="background:#eee7d8;color:#254334" onclick="requestPasswordReset()">Olvidé mi contraseña</button>
     </div>
     <div id="loginMessage" style="margin-top:8px;font-size:12px;color:#777"></div>
+  </div>
+
+  <div class="card" id="recoveryCard" style="display:none">
+    <h3 style="margin-top:0">Crear nueva contraseña</h3>
+    <p style="margin-top:0;color:#666;font-size:13px;line-height:1.45">
+      Escribe tu nueva contraseña de administrador.
+    </p>
+    <div class="controls">
+      <input class="wide" id="newPassword" type="password" placeholder="Nueva contraseña">
+      <input class="wide" id="confirmPassword" type="password" placeholder="Confirmar contraseña">
+      <button class="btn-primary wide" onclick="updateRecoveredPassword()">Guardar nueva contraseña</button>
+    </div>
+    <div id="recoveryMessage" style="margin-top:8px;font-size:12px;color:#777"></div>
   </div>
 
   <div id="adminApp">
@@ -135,34 +149,139 @@ function configured(){
 function mxn(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(v)}
 function area(v){return new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(v)+' m²'}
 
+function showRecoveryForm(){
+  document.getElementById('loginCard').classList.remove('show');
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('recoveryCard').style.display='block';
+}
+
+function hideRecoveryForm(){
+  document.getElementById('recoveryCard').style.display='none';
+}
+
 async function init(){
   if(configured() && window.supabase){
     cloud=true;
-    client=window.supabase.createClient(PDS_AVAILABILITY.supabaseUrl,PDS_AVAILABILITY.supabaseAnonKey);
+    client=window.supabase.createClient(
+      PDS_AVAILABILITY.supabaseUrl,
+      PDS_AVAILABILITY.supabaseAnonKey
+    );
+
     document.getElementById('modeBanner').className='banner cloud';
-    document.getElementById('modeBanner').textContent='Modo conectado: los cambios se guardan en la base de datos y se reflejan automáticamente en la página pública.';
+    document.getElementById('modeBanner').textContent=
+      'Modo conectado: los cambios se guardan en la base de datos y se reflejan automáticamente en la página pública.';
+
+    client.auth.onAuthStateChange(async (event, session)=>{
+      if(event==='PASSWORD_RECOVERY'){
+        signedIn=!!session;
+        showRecoveryForm();
+      }
+      if(event==='SIGNED_IN' && !location.hash.includes('type=recovery')){
+        signedIn=true;
+      }
+    });
+
+    const recoveryInUrl =
+      location.hash.includes('type=recovery') ||
+      new URLSearchParams(location.search).get('type')==='recovery';
+
     const {data:sessionData}=await client.auth.getSession();
     signedIn=!!sessionData.session;
+
+    if(recoveryInUrl){
+      showRecoveryForm();
+      return;
+    }
+
     document.getElementById('loginCard').classList.toggle('show',!signedIn);
     document.getElementById('adminApp').style.display=signedIn?'block':'none';
-    if(signedIn)await loadCloud();
+
+    if(signedIn) await loadCloud();
   }else{
     try{states=JSON.parse(localStorage.getItem(STORAGE)||'{}')||{}}catch(e){states={}}
     renderAdmin();
   }
 }
+
 async function adminLogin(){
   const email=document.getElementById('adminEmail').value.trim();
   const password=document.getElementById('adminPassword').value;
   const msg=document.getElementById('loginMessage');
+
+  if(!email || !password){
+    msg.textContent='Escribe tu correo y contraseña.';
+    return;
+  }
+
   msg.textContent='Entrando...';
   const {error}=await client.auth.signInWithPassword({email,password});
-  if(error){msg.textContent=error.message;return}
+
+  if(error){
+    msg.textContent='No se pudo iniciar sesión: '+error.message;
+    return;
+  }
+
   signedIn=true;
+  hideRecoveryForm();
+  document.getElementById('loginCard').classList.remove('show');
+  document.getElementById('adminApp').style.display='block';
+  msg.textContent='';
+  await loadCloud();
+}
+
+async function requestPasswordReset(){
+  const email=document.getElementById('adminEmail').value.trim();
+  const msg=document.getElementById('loginMessage');
+
+  if(!email){
+    msg.textContent='Primero escribe tu correo de administrador.';
+    return;
+  }
+
+  msg.textContent='Enviando correo de recuperación...';
+
+  const redirectTo=location.origin + location.pathname;
+  const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo});
+
+  if(error){
+    msg.textContent='No se pudo enviar el correo: '+error.message;
+    return;
+  }
+
+  msg.textContent='Correo enviado. Abre el enlace que llegó a tu correo y volverás a esta página para crear una contraseña nueva.';
+}
+
+async function updateRecoveredPassword(){
+  const p1=document.getElementById('newPassword').value;
+  const p2=document.getElementById('confirmPassword').value;
+  const msg=document.getElementById('recoveryMessage');
+
+  if(p1.length<8){
+    msg.textContent='Usa una contraseña de al menos 8 caracteres.';
+    return;
+  }
+  if(p1!==p2){
+    msg.textContent='Las contraseñas no coinciden.';
+    return;
+  }
+
+  msg.textContent='Guardando nueva contraseña...';
+  const {error}=await client.auth.updateUser({password:p1});
+
+  if(error){
+    msg.textContent='No se pudo cambiar la contraseña: '+error.message;
+    return;
+  }
+
+  history.replaceState({},document.title,location.pathname);
+  msg.textContent='Contraseña actualizada correctamente.';
+  signedIn=true;
+  hideRecoveryForm();
   document.getElementById('loginCard').classList.remove('show');
   document.getElementById('adminApp').style.display='block';
   await loadCloud();
 }
+
 async function loadCloud(){
   const {data,error}=await client.from('lot_statuses').select('manzana,lote,status');
   if(error){alert('No se pudo cargar disponibilidad: '+error.message);return}

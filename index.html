@@ -195,6 +195,81 @@ body{min-height:0}
   .navbtn,.menubtn{padding:8px 11px;font-size:12px}
   .closebtn{top:4px;right:6px}
 }
+
+.price-hotspot{
+  position:absolute;z-index:9;display:block;background:transparent;border:0;
+  border-radius:10px;cursor:pointer
+}
+.price-hotspot:hover,.price-hotspot:focus-visible{
+  outline:3px solid rgba(228,171,42,.95);background:rgba(255,255,255,.08)
+}
+.price-modal{
+  display:none;position:fixed;inset:0;z-index:140;background:rgba(3,16,12,.94);
+  align-items:center;justify-content:center;padding:18px
+}
+.price-modal.open{display:flex}
+.price-card{
+  width:min(96vw,1180px);height:min(94vh,900px);background:#f8f5ec;border-radius:20px;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.55);
+  border:1px solid rgba(221,175,56,.5)
+}
+.price-head{
+  padding:20px 22px 16px;background:linear-gradient(135deg,#073b2a,#0b5a3e);
+  color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:16px
+}
+.price-head h2{margin:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;color:#f4d27a}
+.price-head p{margin:5px 0 0;color:rgba(255,255,255,.82);font-size:14px}
+.price-menu-btn{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.28);background:#d8aa38;color:#173728;
+  border-radius:999px;padding:10px 15px;font-weight:900;cursor:pointer
+}
+.price-toolbar{
+  display:grid;grid-template-columns:1fr 200px auto;gap:10px;padding:14px 18px;background:#eee7d8;
+  border-bottom:1px solid #ded2b7
+}
+.price-search,.price-filter{
+  width:100%;border:1px solid #cdbd96;border-radius:10px;padding:11px 12px;background:#fff;
+  color:#20372c;font-size:14px;outline:none
+}
+.price-badge{
+  display:flex;align-items:center;justify-content:center;border-radius:10px;padding:9px 13px;
+  background:#0d5038;color:#fff;font-weight:900;font-size:13px;white-space:nowrap
+}
+.price-table-wrap{flex:1;overflow:auto;background:#fff}
+.price-table{width:100%;border-collapse:separate;border-spacing:0;min-width:850px;font-size:14px}
+.price-table th{
+  position:sticky;top:0;z-index:3;background:#123f30;color:#fff;padding:11px 12px;
+  text-align:left;border-right:1px solid rgba(255,255,255,.12);font-weight:900
+}
+.price-table td{
+  padding:10px 12px;border-bottom:1px solid #ece6d8;border-right:1px solid #f0eadc;color:#26382f
+}
+.price-table tbody tr:nth-child(even):not(.group-row){background:#fbfaf6}
+.price-table tbody tr:hover:not(.group-row){background:#fff5d8}
+.price-table .group-row td{
+  position:sticky;top:40px;z-index:2;background:#e1b749;color:#163527;font-weight:900;
+  letter-spacing:.5px;border-bottom:1px solid #c89a26;padding:9px 12px
+}
+.price-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.price-total{font-weight:900;color:#0b5138}
+.price-foot{
+  padding:10px 18px;background:#eee7d8;color:#6a665d;font-size:12px;
+  border-top:1px solid #ded2b7;text-align:center
+}
+@media(max-width:700px){
+  .price-hotspot{top:1.86%!important;height:6.56%!important}
+  .price-modal{padding:5px}
+  .price-card{width:100vw;height:100dvh;max-height:none;border-radius:0}
+  .price-head{padding:16px 14px 12px}
+  .price-head h2{font-size:24px}
+  .price-head p{font-size:12px}
+  .price-menu-btn{padding:9px 11px;font-size:12px}
+  .price-toolbar{grid-template-columns:1fr 120px;padding:10px;gap:8px}
+  .price-badge{grid-column:1/-1;padding:8px;font-size:12px}
+  .price-table{font-size:13px;min-width:780px}
+  .price-table th,.price-table td{padding:9px 10px}
+}
+
 </style>
 </head>
 <body>
@@ -206,6 +281,11 @@ body{min-height:0}
   <div id="assetError" style="display:none;min-height:70vh;align-items:center;justify-content:center;text-align:center;padding:32px;color:#fff;background:#082f22;font-size:18px;font-weight:700">
     No se pudo cargar la imagen principal del sitio.
   </div>
+
+
+  <button class="price-hotspot"
+          style="left:47.58%;top:1.20%;width:10.15%;height:4.24%;"
+          onclick="openPrices()" aria-label="Abrir precio por lote" title="Precio por lote"></button>
 
   <a class="map-hotspot"
      href="https://www.google.com/maps/search/?api=1&query=Juan+Escutia+y+Camino+Real%2C+Colonia+Miguel+Hidalgo%2C+Penjamo%2C+Guanajuato%2C+Mexico"
@@ -306,7 +386,111 @@ body{min-height:0}
   </div>
 </div>
 
+
+<div class="price-modal" id="priceModal">
+  <div class="price-card">
+    <div class="price-head">
+      <div>
+        <h2>Precio por lote</h2>
+        <p>Consulta manzana, lote, medidas, superficie y precio calculado.</p>
+      </div>
+      <button class="price-menu-btn" onclick="backPriceToMain()">← Menú principal</button>
+    </div>
+
+    <div class="price-toolbar">
+      <input class="price-search" id="priceSearch" type="search"
+             placeholder="Buscar: M3 lote 12, 128 m²..." oninput="renderPriceTable()">
+      <select class="price-filter" id="priceFilter" onchange="renderPriceTable()">
+        <option value="">Todas las manzanas</option>
+        <option>M1</option><option>M2</option><option>M3</option><option>M4</option>
+        <option>M5</option><option>M6</option><option>M7</option><option>M8</option>
+        <option>M9</option><option>M10</option><option>M11</option><option>M12</option>
+      </select>
+      <div class="price-badge">Precio por m²: $2,500 MXN</div>
+    </div>
+
+    <div class="price-table-wrap">
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th>Manzana</th>
+            <th>Lote</th>
+            <th>Medidas</th>
+            <th class="num">Superficie</th>
+            <th class="num">Precio m²</th>
+            <th class="num">Precio total</th>
+          </tr>
+        </thead>
+        <tbody id="priceTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="price-foot">
+      Precios calculados a $2,500 MXN por m². Información basada en los planos individuales publicados. Precios sujetos a disponibilidad y actualización.
+    </div>
+  </div>
+</div>
+
 <script>
+
+const PRICE_PER_M2 = 2500;
+const lotsData = [{"manzana":"M1","lote":1,"medidas":"Irregular · 17.97 / 16.74 / 11.35 m","superficie":122.25},{"manzana":"M1","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":7,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":8,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":9,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":10,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":11,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":12,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":13,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":14,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":15,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":16,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":17,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":18,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":19,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":20,"medidas":"Irregular · 11.06 / 5.36 / 8.35 m","superficie":157.32},{"manzana":"M1","lote":21,"medidas":"Irregular · 16.00 / 9.66 / 8.35 m","superficie":155.36},{"manzana":"M1","lote":22,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":23,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":24,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":25,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":26,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":27,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":28,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":29,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":30,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":31,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":32,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":33,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":34,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":35,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":36,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":37,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":38,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M1","lote":39,"medidas":"Irregular · frente 17.57 m","superficie":119.27},{"manzana":"M2","lote":1,"medidas":"Irregular · 16.00 / 18.58 / 17.97 m","superficie":205.64},{"manzana":"M2","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":7,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":8,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":9,"medidas":"Irregular · ver plano","superficie":155.89},{"manzana":"M2","lote":10,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":11,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":12,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":13,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":14,"medidas":"Irregular · 16.00 / 9.14 m","superficie":141.98},{"manzana":"M2","lote":15,"medidas":"Irregular · 16.01 m de frente","superficie":133.55},{"manzana":"M2","lote":16,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":17,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":18,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":19,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":20,"medidas":"Irregular · ver plano","superficie":155.9},{"manzana":"M2","lote":21,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":22,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":23,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":24,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":25,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":26,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":27,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":28,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M2","lote":29,"medidas":"Irregular · 16.00 / 8.57 / 17.97 m","superficie":202.67},{"manzana":"M3","lote":1,"medidas":"Irregular · 16.00 / 17.04 / 17.97 m","superficie":216.7},{"manzana":"M3","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":7,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":8,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":9,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":10,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":11,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":12,"medidas":"Irregular · 16.01 / 10.77 m","superficie":168.04},{"manzana":"M3","lote":13,"medidas":"Irregular · 15.96 / 9.71 / 10.24 m","superficie":159.54},{"manzana":"M3","lote":14,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":15,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":16,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":17,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":18,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":19,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":20,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":21,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":22,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M3","lote":23,"medidas":"Irregular · 16.00 / 9.27 / 17.97 m","superficie":213.72},{"manzana":"M4","lote":1,"medidas":"Irregular · 16.00 / 13.83 / 17.97 m","superficie":152.59},{"manzana":"M4","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":7,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":8,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":9,"medidas":"8.00 × 16.16 m","superficie":128.64},{"manzana":"M4","lote":10,"medidas":"8.00 × 16.32 m","superficie":129.89},{"manzana":"M4","lote":11,"medidas":"8.00 × 16.48 m","superficie":131.16},{"manzana":"M4","lote":12,"medidas":"8.00 × 16.53 m","superficie":132.45},{"manzana":"M4","lote":13,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":14,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":15,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":16,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":17,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":18,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M4","lote":19,"medidas":"Irregular · 16.00 / 5.26 / 17.97 m","superficie":149.62},{"manzana":"M5","lote":1,"medidas":"Irregular · 16.00 / 8.11 / 17.97 m","superficie":195.3},{"manzana":"M5","lote":2,"medidas":"Irregular · 16.00 / 16.48 / 17.97 m","superficie":198.27},{"manzana":"M5","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":7,"medidas":"8.00 × 16.16 m","superficie":128.64},{"manzana":"M5","lote":8,"medidas":"8.00 × 16.32 m","superficie":129.91},{"manzana":"M5","lote":9,"medidas":"8.00 × 16.48 m","superficie":131.17},{"manzana":"M5","lote":10,"medidas":"8.00 × 16.64 m","superficie":132.47},{"manzana":"M5","lote":11,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":12,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M5","lote":13,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M6","lote":1,"medidas":"Irregular · 16.00 / 2.97 / 17.97 m","superficie":113.0},{"manzana":"M6","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M6","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M6","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M6","lote":5,"medidas":"8.00 × 16.00 m aprox.","superficie":128.65},{"manzana":"M6","lote":6,"medidas":"8.00 × 16.32 m","superficie":129.9},{"manzana":"M6","lote":7,"medidas":"8.00 × 16.48 m","superficie":131.17},{"manzana":"M6","lote":8,"medidas":"8.00 × 16.84 m","superficie":132.47},{"manzana":"M6","lote":9,"medidas":"Irregular · 16.00 / 11.34 / 17.97 m","superficie":115.98},{"manzana":"M7","lote":1,"medidas":"Irregular · 12.00 / 15.39 / 19.24 m","superficie":230.84},{"manzana":"M7","lote":2,"medidas":"8.00 × 19.24 m","superficie":153.89},{"manzana":"M7","lote":3,"medidas":"8.00 × 19.24 m","superficie":153.89},{"manzana":"M7","lote":4,"medidas":"28.00 × 8.00 m","superficie":224.0},{"manzana":"M7","lote":5,"medidas":"Irregular · 28.04 / 7.70 / 9.11 m","superficie":235.4},{"manzana":"M8","lote":1,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M8","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M8","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M8","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M8","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M8","lote":6,"medidas":"16.02 × 7.00 m","superficie":112.0},{"manzana":"M8","lote":7,"medidas":"16.02 × 7.85 m","superficie":113.39},{"manzana":"M8","lote":8,"medidas":"Irregular · 16.02 / 12.40 / 13.52 m","superficie":207.4},{"manzana":"M8","lote":9,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M9","lote":1,"medidas":"8.32 × 16.00 m","superficie":130.6},{"manzana":"M9","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M9","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M9","lote":4,"medidas":"7.88 × 16.00 m","superficie":125.5},{"manzana":"M9","lote":5,"medidas":"15.52 × 8.00 m","superficie":124.8},{"manzana":"M9","lote":6,"medidas":"15.36 × 8.00 m","superficie":123.5},{"manzana":"M9","lote":7,"medidas":"Irregular · 15.21 / 9.68 m","superficie":139.6},{"manzana":"M9","lote":8,"medidas":"Irregular · 16.83 / 7.42 m","superficie":134.0},{"manzana":"M9","lote":9,"medidas":"16.64 × 8.00 m","superficie":132.5},{"manzana":"M9","lote":10,"medidas":"16.48 × 8.00 m","superficie":131.2},{"manzana":"M10","lote":1,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":2,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":3,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":4,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":5,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":6,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":7,"medidas":"16.02 × 12.07 m","superficie":186.6},{"manzana":"M10","lote":8,"medidas":"16.02 × 10.45 m","superficie":173.7},{"manzana":"M10","lote":9,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M10","lote":10,"medidas":"8.00 × 16.00 m","superficie":128.0},{"manzana":"M11","lote":1,"medidas":"Irregular · 17.00 / 7.88 m","superficie":121.62},{"manzana":"M11","lote":2,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":3,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":4,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":5,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":6,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":7,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":8,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":9,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":10,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":11,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":12,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":13,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":14,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":15,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":16,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":17,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":18,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":19,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":20,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":21,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":22,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":23,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":24,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":25,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":26,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":27,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":28,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":29,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":30,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":31,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":32,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":33,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":34,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":35,"medidas":"8.00 × 17.00 m","superficie":136.0},{"manzana":"M11","lote":36,"medidas":"Irregular · 9.23 / 12.00 / 13.76 m","superficie":195.41},{"manzana":"M12","lote":1,"medidas":"Irregular · 19.40 m lateral","superficie":168.39},{"manzana":"M12","lote":2,"medidas":"Irregular · 13.73 / 12.72 m","superficie":172.09},{"manzana":"M12","lote":3,"medidas":"Irregular · 25.18 / 13.13 m","superficie":147.79},{"manzana":"M12","lote":4,"medidas":"Irregular · 28.00 / 7.81 m","superficie":159.53},{"manzana":"M12","lote":5,"medidas":"8.00 × 17.76 m","superficie":142.1},{"manzana":"M12","lote":6,"medidas":"8.00 × 17.76 m","superficie":142.1},{"manzana":"M12","lote":7,"medidas":"12.00 × 17.76 m","superficie":213.15}];
+
+function openPrices(){
+  priceModal.classList.add('open');
+  document.body.style.overflow='hidden';
+  renderPriceTable();
+}
+function closePrices(){
+  priceModal.classList.remove('open');
+  document.body.style.overflow='';
+}
+function backPriceToMain(){
+  closePrices();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function mxn(value){
+  return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(value);
+}
+function areaFmt(value){
+  return new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}).format(value)+' m²';
+}
+function renderPriceTable(){
+  const tbody=document.getElementById('priceTableBody');
+  if(!tbody)return;
+  const q=(document.getElementById('priceSearch')?.value||'').trim().toLowerCase();
+  const filter=document.getElementById('priceFilter')?.value||'';
+  const filtered=lotsData.filter(r=>{
+    if(filter && r.manzana!==filter)return false;
+    if(!q)return true;
+    const hay=`${r.manzana} lote ${r.lote} ${r.medidas} ${r.superficie}`.toLowerCase();
+    return q.split(/\s+/).every(part=>hay.includes(part));
+  });
+
+  let htmlRows='';
+  let last='';
+  for(const r of filtered){
+    if(r.manzana!==last){
+      last=r.manzana;
+      const count=filtered.filter(x=>x.manzana===last).length;
+      htmlRows+=`<tr class="group-row"><td colspan="6">${last} · ${count} lote${count===1?'':'s'}</td></tr>`;
+    }
+    const total=r.superficie*PRICE_PER_M2;
+    htmlRows+=`<tr>
+      <td><strong>${r.manzana}</strong></td>
+      <td>${r.lote}</td>
+      <td>${r.medidas}</td>
+      <td class="num">${areaFmt(r.superficie)}</td>
+      <td class="num">${mxn(PRICE_PER_M2)}</td>
+      <td class="num price-total">${mxn(total)}</td>
+    </tr>`;
+  }
+  if(!filtered.length){
+    htmlRows='<tr><td colspan="6" style="padding:28px;text-align:center;color:#777">No se encontraron lotes con esa búsqueda.</td></tr>';
+  }
+  tbody.innerHTML=htmlRows;
+}
+
 const images={
   "M1":"./M1.png","M2":"./M2.png","M3":"./M3_corregida.png","M4":"./M4.png",
   "M5":"./M5.png","M6":"./M6.png","M7":"./M7.png","M8":"./M8.png",
@@ -373,8 +557,9 @@ function openSelectedMobile(){
 
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
 contactModal.addEventListener('click',e=>{if(e.target===contactModal)closeContact()});
+priceModal.addEventListener('click',e=>{if(e.target===priceModal)closePrices()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();closeContact()}
+  if(e.key==='Escape'){closeModal();closeContact();closePrices()}
   if(modal.classList.contains('open')){
     if(e.key==='ArrowLeft')move(-1);
     if(e.key==='ArrowRight')move(1);
